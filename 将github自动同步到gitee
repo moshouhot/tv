@@ -1,0 +1,62 @@
+1、利用git软件生成公钥放在gitee里（Gitee: 「设置」–>「安全设置」–>「SSH公钥」，标题随意起）
+2、把私钥给github用（GitHub Repository: 「Settings」–>「Secrets」里私钥名字为GITEE_KEY）。
+图文教程：https://blog.csdn.net/sculpta/article/details/104897320
+
+公钥如下：
+---- BEGIN SSH2 PUBLIC KEY ----
+Comment: "rsa-key-20200408"
+AAAAB3NzaC1yc2EAAAABJQAAAQEAoJ8KwROELM3gPxhzA6oJlvx9v0ltcXgotGHO
+7sQ6/k9XNsDKLU0XqeFC37/I+0K+d77JLC7ZFIekHi0/SKdobiToU0OxlgWJ/XRP
+vBuePfFwY0rpJsRbPOwfZJNHyvP1NRAa7MahbHh5VWD5BdZjpzbtqvpvyv6KWAWd
+RKDX7xc5Vckosdq/LCv3x32sJgM7uJGLji58MWhNvu4zs16lahGA3O5eJE0VsknK
+Y2XNQdMjy8TEhKvVobBW+BvMqzGhH56pBRRJybCREHcStmLOn+Z89O3/QkBl0X+s
+NtrQ7pp4nPZqVZ0ipD91+VZtGWqjFxCwF3k1203Fond+ziUSxQ==
+---- END SSH2 PUBLIC KEY ----
+
+私钥如下：
+PuTTY-User-Key-File-2: ssh-rsa
+Encryption: none
+Comment: rsa-key-20200408
+Public-Lines: 6
+AAAAB3NzaC1yc2EAAAABJQAAAQEAoJ8KwROELM3gPxhzA6oJlvx9v0ltcXgotGHO
+7sQ6/k9XNsDKLU0XqeFC37/I+0K+d77JLC7ZFIekHi0/SKdobiToU0OxlgWJ/XRP
+vBuePfFwY0rpJsRbPOwfZJNHyvP1NRAa7MahbHh5VWD5BdZjpzbtqvpvyv6KWAWd
+RKDX7xc5Vckosdq/LCv3x32sJgM7uJGLji58MWhNvu4zs16lahGA3O5eJE0VsknK
+Y2XNQdMjy8TEhKvVobBW+BvMqzGhH56pBRRJybCREHcStmLOn+Z89O3/QkBl0X+s
+NtrQ7pp4nPZqVZ0ipD91+VZtGWqjFxCwF3k1203Fond+ziUSxQ==
+Private-Lines: 14
+AAABAFbSglqHFwN2NAZuFKgI4pbNq8FYH3ua5ZHvriAyuBrDGmLJE1bB40cR+qJ1
+gWU41aiCzZtXl+9r6gJ5UqPQHMXqb75OGs2iIRNhdzU/XHSCgfB7hPJcTP5WHs6U
+zNxoMYR3aH/8qkh4eO/hZAMnxyn0LXEtbNxt6epj5k6cIbGq04wqxVGyxxjfzo+p
+JqUSkMMgJ0FD1g7W5NBs/H2p707nq0a3Bx9SR7ixqZZRutQEvFXuRu0quxyLoTu9
+XuLM0vkNKRPew+hrj1tDD+8du+8Pcv+Y96rGCdhM+uiKbb4IjGysGZWz/uAfbVqI
+4vdLJm4nbsAwV3WMuFU8EOI4810AAACBAOQfK2WQOIzyvHQc6Pl9u5tJtIBafc7r
+0OK91fcp+RQIXMQwvBfe3eWuBqEtYllagbD2ofWFJnuU8I+WmQMB0mU9eG+zlcHH
+Uwp45yYjPJfgyBgewUob31iuEWRc0/WndVstjig89lKUuqBHVDZoSkVbtREPUY+I
+LjBYI6WJsjgnAAAAgQC0QBtvsORB5QSr7ZvEw7IUn3so+vMuEIndTE6coOswQu6M
+nJLffrCRu2DirLkNeK8WaV0yLyl/5L12sv4NUpeCYjRG7LwD+sm9Ye11fy80q0HQ
+FutRXaXhU0ZEeKBdDfuzP/asXU0FV0qxyoT5NG7wPF94iwFq7NtARj5Toe/lMwAA
+AIEA1xZOXyLLo0rfDrYxa4Wavb/PpGaxcdRFtEVpyHZPTD5UJox+0tN249MgVqIr
+EtCUKIS6y6/iJqVJaU/bdnUDelh63WTDX212DRcWxvPdgzAyB7nVh4dkc7MEuY9P
+cLWsrgkvIAI+jNViYfHVeIZeC9fQJ4+o5SSXWyOcZF+ottw=
+Private-MAC: 904574a472896ea9d43c0fb69faac91428b8c15a
+
+3、把下面的代码放在actions里，文件名为mirror.yml
+
+name: 'GitHub Actions Mirror'
+
+on: [push, delete]
+
+jobs:
+  mirror_to_gitee:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v1
+      - name: 'Mirror to gitee'
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url:
+            git@gitee.com:ilangel/tv.git
+          ssh_private_key:
+            ${{ secrets.GITEE_KEY }} 
